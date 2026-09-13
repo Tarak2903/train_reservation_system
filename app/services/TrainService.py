@@ -16,85 +16,33 @@ from app.models.schemas.seat import Seat
 
 
 class TrainService:
-    def __init__(self, train_repo):
+    def __init__(self, train_repo,journey_repo):
         self.train_repo = train_repo
+        self.journey_repo=journey_repo
 
-    async def add_train(self, train_request):
+
+    async def check_existing_train_by_number(self,train_request):
         if await self.train_repo.find_train_by_number(train_request.train_number):
             raise TrainAlreadyExistsException("Train already exists")
+
+
+    async def add_train(self, train_request):
+        await self.check_existing_train_by_number(train_request)
 
         train = Train(**train_request.model_dump())
         await self.train_repo.add_train(train)
 
         today = date.today()
         for i in range(7):
-            await self.train_repo.add_schedule(
+            await self.journey_repo.add_schedule(
                 TrainSchedule(
                     train_id=train.id,
                     journey_date=today + timedelta(days=i),
                 )
             )
-
         await self.train_repo.db.commit()
         await self.train_repo.db.refresh(train)
         return train
-
-    async def add_journey(self, train_id, journey_request):
-        if not await self.train_repo.find_train_by_id(train_id):
-            raise ResourceNotFoundException("Train doesnt exists")
-
-        if await self.train_repo.find_schedule(
-            train_id,
-            journey_request.journey_date,
-        ):
-            raise ResourceAlreadyExistsException("Journey date already exists")
-
-        journey = TrainSchedule(
-            train_id=train_id,
-            journey_date=journey_request.journey_date,
-        )
-        await self.train_repo.add_schedule(journey)
-        await self.train_repo.db.commit()
-        await self.train_repo.db.refresh(journey)
-        return journey
-
-    # async def add_coach(self, train_id, coach_request):
-    #     train = await self.train_repo.find_train_by_id(train_id)
-    #     if not train:
-    #         raise ResourceNotFoundException("Train doesnt exists")
-    #
-    #     if coach_request.rac_capacity > coach_request.total_seat_capacity:
-    #         raise ResourceAlreadyExistsException(
-    #             "RAC capacity cannot exceed total seat capacity"
-    #         )
-    #
-    #     result = await self.train_repo.db.execute(
-    #         select(Coach).where(
-    #             Coach.train_id == train_id,
-    #             Coach.coach_number == coach_request.coach_number,
-    #         )
-    #     )
-    #     if result.scalar_one_or_none():
-    #         raise ResourceAlreadyExistsException("Coach already exists")
-    #
-    #     coach = Coach(
-    #         train_id=train_id,
-    #         coach_number=coach_request.coach_number,
-    #         class_type=coach_request.class_type,
-    #         total_seat_capacity=coach_request.total_seat_capacity,
-    #         rac_capacity=coach_request.rac_capacity,
-    #     )
-    #     await self.train_repo.add_coach(coach)
-    #
-    #     await self.add_seat(
-    #         coach.id,
-    #         coach_request.total_seat_capacity,
-    #     )
-    #
-    #     await self.train_repo.db.commit()
-    #     await self.train_repo.db.refresh(coach)
-    #     return coach
-
 
 
     async def get_layout(self, train_id, journey_date, class_type):
@@ -107,12 +55,13 @@ class TrainService:
 
         return await self.train_repo.get_coaches(train_id, class_type)
 
+
     async def get_all_trains(self):
         trains=await self.train_repo.get_all_trains()
         if not trains:
             raise TrainNotFoundException("No trains available")
-
         return  trains
+
 
     async def get_coaches_by_train_number(self,train_number):
         train=await self.find_train_by_number(train_number)

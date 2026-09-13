@@ -4,11 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.helpers.database import get_db
 from app.repositories.CoachRepository import CoachRepository
 from app.repositories.AuthRepository import AuthRepository
+from app.repositories.JourneyRepository import JourneyRepository
 from app.repositories.SeatRepository import SeatRepository
 from app.repositories.TrainRepository import TrainRepository
 from app.repositories.BookingRepository import BookingRepository
 from app.services.AuthService import AuthService
 from app.services.CoachService import CoachService
+from app.services.JourneyService import JourneyService
 from app.services.TrainService import TrainService
 from app.services.BookingService import BookingService
 
@@ -19,12 +21,14 @@ async def get_auth_service(db: AsyncSession = Depends(get_db)):
     return AuthService(AuthRepository(db))
 
 async def get_train_service(db: AsyncSession = Depends(get_db)):
-    return TrainService(TrainRepository(db))
+    return TrainService(TrainRepository(db),JourneyRepository(db))
 
 
 async def get_booking_service(db: AsyncSession = Depends(get_db)):
     return BookingService(BookingRepository(db), TrainRepository(db))
 
-
 async def  get_coach_service(db:AsyncSession=Depends(get_db)):
     return CoachService(CoachRepository(db),TrainRepository(db),SeatRepository(db))
+
+async def get_journey_service(db:AsyncSession=Depends(get_db)):
+    return JourneyService(JourneyRepository(db))
