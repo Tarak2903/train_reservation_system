@@ -29,6 +29,13 @@ class CoachRepository:
         )
         return result.scalar_one_or_none()
 
+    async def get_coaches_by_train_id_and_class_type(self,train_id,class_type):
+        result=await self.db.execute(
+        select(Coach)
+        .options(selectinload(Coach.seats))
+        .where(Coach.train_id==train_id,Coach.class_type==class_type)
+        )
+        return result.scalars().all()
 
     async def add_coach(self, coach):
         self.db.add(coach)

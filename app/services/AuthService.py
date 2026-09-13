@@ -26,6 +26,7 @@ class AuthService:
             algorithm=settings.ALGORITHM,
         )
 
+
     async def signup_user(self, user_request):
         if await self.auth_repo.find_user_by_username(user_request.user_name):
             raise ResourceAlreadyExistsException("User already exists")
@@ -37,6 +38,7 @@ class AuthService:
             role=Role.USER,
         )
         return await self.auth_repo.add_user(user)
+
 
     async def login_user(self, user):
         user_info = await self.auth_repo.find_user_by_username(user.username)

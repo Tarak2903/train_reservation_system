@@ -6,7 +6,6 @@ from starlette import status
 from app.auth import get_current_admin, get_current_user
 from app.dependency import get_train_service
 from app.models.DTOs.APIResponse import APIResponse
-from app.models.DTOs.Coach.CoachResponse import CoachResponse
 from app.models.DTOs.Train.TrainCreationRequest import TrainCreationRequest
 from app.models.DTOs.Train.TrainResponse import TrainResponse
 from app.models.enums import CoachClass

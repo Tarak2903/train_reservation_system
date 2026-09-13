@@ -16,9 +16,10 @@ from app.models.schemas.seat import Seat
 
 
 class TrainService:
-    def __init__(self, train_repo,journey_repo):
+    def __init__(self, train_repo,journey_repo,coach_repo):
         self.train_repo = train_repo
         self.journey_repo=journey_repo
+        self.coach_repo=coach_repo
 
 
     async def check_existing_train_by_number(self,train_request):
@@ -50,10 +51,10 @@ class TrainService:
         if not train:
             raise TrainNotFoundException("Train doesnt exists")
 
-        if not await self.train_repo.find_schedule(train_id, journey_date):
+        if not await self.journey_repo.find_schedule(train_id, journey_date):
             raise TrainNotFoundException("Journey date is not available")
 
-        return await self.train_repo.get_coaches(train_id, class_type)
+        return await self.coach_repo.get_coaches_by_train_id_and_class_type(train_id, class_type)
 
 
     async def get_all_trains(self):
@@ -62,17 +63,6 @@ class TrainService:
             raise TrainNotFoundException("No trains available")
         return  trains
 
-
-    async def get_coaches_by_train_number(self,train_number):
-        train=await self.find_train_by_number(train_number)
-        if not train :
-            raise TrainNotFoundException("No trains exist with the following number ")
-
-        coaches=await self.train_repo.get_coaches_by_train_number(train_number)
-
-        if not coaches:
-            raise ResourceNotFoundException("No coaches added in the train yet")
-        return coaches.coaches
 
 
     async def find_train_by_number(self,train_number):
