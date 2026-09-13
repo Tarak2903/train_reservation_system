@@ -58,63 +58,44 @@ class TrainService:
         await self.train_repo.db.refresh(journey)
         return journey
 
-    async def add_coach(self, train_id, coach_request):
-        train = await self.train_repo.find_train_by_id(train_id)
-        if not train:
-            raise ResourceNotFoundException("Train doesnt exists")
+    # async def add_coach(self, train_id, coach_request):
+    #     train = await self.train_repo.find_train_by_id(train_id)
+    #     if not train:
+    #         raise ResourceNotFoundException("Train doesnt exists")
+    #
+    #     if coach_request.rac_capacity > coach_request.total_seat_capacity:
+    #         raise ResourceAlreadyExistsException(
+    #             "RAC capacity cannot exceed total seat capacity"
+    #         )
+    #
+    #     result = await self.train_repo.db.execute(
+    #         select(Coach).where(
+    #             Coach.train_id == train_id,
+    #             Coach.coach_number == coach_request.coach_number,
+    #         )
+    #     )
+    #     if result.scalar_one_or_none():
+    #         raise ResourceAlreadyExistsException("Coach already exists")
+    #
+    #     coach = Coach(
+    #         train_id=train_id,
+    #         coach_number=coach_request.coach_number,
+    #         class_type=coach_request.class_type,
+    #         total_seat_capacity=coach_request.total_seat_capacity,
+    #         rac_capacity=coach_request.rac_capacity,
+    #     )
+    #     await self.train_repo.add_coach(coach)
+    #
+    #     await self.add_seat(
+    #         coach.id,
+    #         coach_request.total_seat_capacity,
+    #     )
+    #
+    #     await self.train_repo.db.commit()
+    #     await self.train_repo.db.refresh(coach)
+    #     return coach
 
-        if coach_request.rac_capacity > coach_request.total_seat_capacity:
-            raise ResourceAlreadyExistsException(
-                "RAC capacity cannot exceed total seat capacity"
-            )
 
-        result = await self.train_repo.db.execute(
-            select(Coach).where(
-                Coach.train_id == train_id,
-                Coach.coach_number == coach_request.coach_number,
-            )
-        )
-        if result.scalar_one_or_none():
-            raise ResourceAlreadyExistsException("Coach already exists")
-
-        coach = Coach(
-            train_id=train_id,
-            coach_number=coach_request.coach_number,
-            class_type=coach_request.class_type,
-            total_seat_capacity=coach_request.total_seat_capacity,
-            rac_capacity=coach_request.rac_capacity,
-        )
-        await self.train_repo.add_coach(coach)
-
-        await self.add_seat(
-            coach.id,
-            coach_request.total_seat_capacity,
-        )
-
-        await self.train_repo.db.commit()
-        await self.train_repo.db.refresh(coach)
-        return coach
-
-    async def add_seat(self, coach_id, seat_count):
-        coach = await self.train_repo.find_coach(coach_id)
-        if not coach:
-            raise ResourceNotFoundException("Coach doesnt exists")
-
-        last_seat_number = max(
-            (seat.seat_number for seat in coach.seats),
-            default=0,
-        )
-
-        seats = [
-            Seat(
-                coach_id=coach_id,
-                seat_number=last_seat_number + i,
-            )
-            for i in range(1, seat_count + 1)
-        ]
-
-        await self.train_repo.add_seat(seats)
-        return seats
 
     async def get_layout(self, train_id, journey_date, class_type):
         train = await self.train_repo.find_train_by_id(train_id)

@@ -30,17 +30,15 @@ async def booking_response(booking):
 
         passengers.append(
             PassengerResponse(
-                passenger_id=passenger.passenger_id,
                 passenger_name=passenger.passenger.name,
                 status=passenger.status.value,
                 queue_sequence=passenger.queue_sequence,
                 coach_number=coach_number,
-                seat_number=seat_number,
+                seat_number=seat_number
             )
         )
 
     return BookingResponse(
-        booking_id=booking.id,
         pnr=booking.pnr,
         train_id=booking.train_id,
         journey_date=booking.journey_date,
@@ -101,42 +99,42 @@ async def get_booking_status(
         data=await booking_response(booking),
     )
 
-
-@router.get("/waitlist", response_model=APIResponse[QueueResponse], tags=["Booking"])
-async def get_waitlist(
-    train_id: int,
-    journey_date: date,
-    class_type: CoachClass,
-    current_user: User = Depends(get_current_user),
-    booking_service: BookingService = Depends(get_booking_service),
-):
-    passengers = await booking_service.get_queue(
-        train_id,
-        journey_date,
-        class_type,
-        PassengerStatus.WL,
-    )
-
-    return APIResponse(
-        success=True,
-        message="Waitlist retrieved successfully",
-        data=QueueResponse(
-            train_id=train_id,
-            journey_date=journey_date,
-            class_type=class_type.value,
-            status="WL",
-            passengers=[
-                QueuePassengerResponse(
-                    passenger_id=p.passenger_id,
-                    passenger_name=p.passenger.name,
-                    status=p.status.value,
-                    queue_sequence=p.queue_sequence,
-                    pnr=p.booking.pnr,
-                )
-                for p in passengers
-            ],
-        ),
-    )
+#
+# @router.get("/waitlist", response_model=APIResponse[QueueResponse], tags=["Booking"])
+# async def get_waitlist(
+#     train_id: int,
+#     journey_date: date,
+#     class_type: CoachClass,
+#     current_user: User = Depends(get_current_user),
+#     booking_service: BookingService = Depends(get_booking_service),
+# ):
+#     passengers = await booking_service.get_queue(
+#         train_id,
+#         journey_date,
+#         class_type,
+#         PassengerStatus.WL,
+#     )
+#
+#     return APIResponse(
+#         success=True,
+#         message="Waitlist retrieved successfully",
+#         data=QueueResponse(
+#             train_id=train_id,
+#             journey_date=journey_date,
+#             class_type=class_type.value,
+#             status="WL",
+#             passengers=[
+#                 QueuePassengerResponse(
+#                     passenger_id=p.passenger_id,
+#                     passenger_name=p.passenger.name,
+#                     status=p.status.value,
+#                     queue_sequence=p.queue_sequence,
+#                     pnr=p.booking.pnr,
+#                 )
+#                 for p in passengers
+#             ],
+#         ),
+#     )
 
 
 @router.get("/availability", response_model=APIResponse[AvailabilityResponse], tags=["Booking"])
@@ -156,34 +154,3 @@ async def get_availability(
     )
 
 
-@router.get("/trains/{train_id}/layout", response_model=APIResponse[list], tags=["Booking"])
-async def get_seat_layout(
-    train_id: int,
-    journey_date: date,
-    class_type: CoachClass,
-    current_user: User = Depends(get_current_user),
-    train_service: TrainService = Depends(get_train_service),
-):
-    coaches = await train_service.get_layout(train_id, journey_date, class_type)
-
-    data = [
-        {
-            "coach_id": coach.id,
-            "coach_number": coach.coach_number,
-            "class_type": coach.class_type.value,
-            "seats": [
-                {
-                    "seat_id": seat.id,
-                    "seat_number": seat.seat_number,
-                }
-                for seat in coach.seats
-            ],
-        }
-        for coach in coaches
-    ]
-
-    return APIResponse(
-        success=True,
-        message="Seat layout retrieved successfully",
-        data=data,
-    )

@@ -31,16 +31,16 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 
-from app.controller.auth import router as auth_router
-from app.controller.admin import router as admin_router
-from app.controller.booking import router as booking_router
-from app.controller.train import router as train_router
+from app.controller.AuthController import router as auth_router
+from app.controller.BookingController import router as booking_router
+from app.controller.TrainController import router as train_router
+from app.controller.CoachController import router as coach_router
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(auth_router)
-app.include_router(admin_router)
 app.include_router(booking_router)
 app.include_router(train_router)
+app.include_router(coach_router)
 
 app.add_exception_handler(
     ResourceAlreadyExistsException,

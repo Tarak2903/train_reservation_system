@@ -7,7 +7,7 @@ class PassengerResponse(BaseModel):
     status: str
     queue_sequence: int | None = None
     coach_number: str | None = None
-    # seat_number: str | None = None
+    seat_number: int | None = None
 
 
 class BookingResponse(BaseModel):
