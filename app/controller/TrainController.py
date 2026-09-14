@@ -15,7 +15,7 @@ from app.services.TrainService import TrainService
 router=APIRouter()
 
 
-@router.get('/trains',response_model=APIResponse[list[TrainResponse]])
+@router.get('/trains',response_model=APIResponse[list[TrainResponse]],tags=['Booking'])
 async def get_all_trains(train_service:TrainService=Depends(get_train_service)):
     trains=await train_service.get_all_trains()
 

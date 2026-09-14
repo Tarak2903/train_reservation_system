@@ -16,8 +16,7 @@ from app.services.TrainService import TrainService
 
 router = APIRouter()
 
-
-async def booking_response(booking):
+def booking_response(booking):
     passengers = []
 
     for passenger in booking.passengers:
@@ -60,7 +59,7 @@ async def book_ticket(
     return APIResponse(
         success=True,
         message=message,
-        data=await booking_response(booking),
+        data= booking_response(booking),
     )
 
 
@@ -78,7 +77,7 @@ async def cancel_ticket(
     return APIResponse(
         success=True,
         message="Ticket cancelled successfully",
-        data=await booking_response(booking),
+        data= booking_response(booking),
     )
 
 
@@ -96,45 +95,8 @@ async def get_booking_status(
     return APIResponse(
         success=True,
         message="Booking details retrieved successfully",
-        data=await booking_response(booking),
+        data= booking_response(booking),
     )
-
-#
-# @router.get("/waitlist", response_model=APIResponse[QueueResponse], tags=["Booking"])
-# async def get_waitlist(
-#     train_id: int,
-#     journey_date: date,
-#     class_type: CoachClass,
-#     current_user: User = Depends(get_current_user),
-#     booking_service: BookingService = Depends(get_booking_service),
-# ):
-#     passengers = await booking_service.get_queue(
-#         train_id,
-#         journey_date,
-#         class_type,
-#         PassengerStatus.WL,
-#     )
-#
-#     return APIResponse(
-#         success=True,
-#         message="Waitlist retrieved successfully",
-#         data=QueueResponse(
-#             train_id=train_id,
-#             journey_date=journey_date,
-#             class_type=class_type.value,
-#             status="WL",
-#             passengers=[
-#                 QueuePassengerResponse(
-#                     passenger_id=p.passenger_id,
-#                     passenger_name=p.passenger.name,
-#                     status=p.status.value,
-#                     queue_sequence=p.queue_sequence,
-#                     pnr=p.booking.pnr,
-#                 )
-#                 for p in passengers
-#             ],
-#         ),
-#     )
 
 
 @router.get("/availability", response_model=APIResponse[AvailabilityResponse], tags=["Booking"])

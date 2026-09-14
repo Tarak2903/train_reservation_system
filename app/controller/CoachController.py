@@ -11,7 +11,7 @@ from app.services.TrainService import TrainService
 
 router=APIRouter()
 
-@router.get('/trains/train_number',response_model=APIResponse[list[CoachResponse]])
+@router.get('/trains/train_number',response_model=APIResponse[list[CoachResponse]],tags=['Booking'])
 async def get_coaches_by_train_number(train_number,coach_service:CoachService=Depends(get_coach_service)):
     coaches= await coach_service.get_coaches_by_train_number(train_number)
 

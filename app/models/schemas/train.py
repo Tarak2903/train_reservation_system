@@ -14,6 +14,6 @@ class Train(Base):
     departure_time = Column(String, nullable=False)
     arrival_time = Column(String, nullable=False)
 
-    schedules = relationship("TrainSchedule", back_populates="train", cascade="all, delete-orphan")
-    coaches = relationship("Coach", back_populates="train", cascade="all, delete-orphan")
+    schedules = relationship("TrainSchedule", back_populates="train")
+    coaches = relationship("Coach", back_populates="train")
     bookings = relationship("Booking", back_populates="train")

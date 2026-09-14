@@ -57,7 +57,7 @@ async def validation_exception(request: Request, exc: RequestValidationError):
     details = [
         ErrorDetail(
             code=422,
-            details=f"{'.'.join(str(location) for location in error['loc'])}: {error['msg']}",
+            details=f"{error['msg']}",
         )
         for error in exc.errors()
     ]

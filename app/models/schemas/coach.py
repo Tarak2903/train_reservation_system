@@ -19,4 +19,4 @@ class Coach(Base):
     )
 
     train = relationship("Train", back_populates="coaches")
-    seats = relationship("Seat", back_populates="coach", cascade="all, delete-orphan")
+    seats = relationship("Seat", back_populates="coach")

@@ -21,14 +21,54 @@ class BookingService:
     def generate_pnr():
         return str(secrets.randbelow(900000000) + 100000000)
 
+    async def _get_available_seats(
+            self,
+            train_id,
+            journey_date,
+            class_type,
+            group_size,
+    ):
+        occupied = await self.booking_repo.get_occupied_seat_ids(
+            train_id,
+            journey_date,
+            class_type,
+        )
 
-    async def _get_available_seats(self, train_id, journey_date, class_type):
-        occupied = await self.booking_repo.get_occupied_seat_ids(train_id,journey_date,class_type)
-        return [seat
-            for seat in await self.booking_repo.get_seats(train_id, class_type)
-            if seat.id not in occupied
-        ]
+        seats = await self.booking_repo.get_seats(
+            train_id,
+            class_type,
+        )
 
+        selected_seats = []
+
+        for seat in seats:
+
+            if seat.id in occupied:
+                continue
+
+            locked = await self.booking_repo.try_lock_seat(
+                journey_date,
+                seat.id,
+            )
+
+            if not locked:
+                continue
+
+            occupied_now = await self.booking_repo.get_occupied_seat_ids(
+                train_id,
+                journey_date,
+                class_type,
+            )
+
+            if seat.id in occupied_now:
+                continue
+
+            selected_seats.append(seat)
+
+            if len(selected_seats) == group_size:
+                break
+
+        return selected_seats
 
     async def _next_sequence(self, schedule_id, class_type, status):
         return await self.booking_repo.get_next_sequence(schedule_id,class_type,status)
@@ -113,7 +153,7 @@ class BookingService:
 
         group_size = len(passenger_ids)
         class_type = request.class_type
-        available_seats = await self._get_available_seats(request.train_id,request.journey_date,class_type,)
+        available_seats = await self._get_available_seats(request.train_id,request.journey_date,class_type,group_size)
         confirmed_available = len(available_seats)
         current_rac = await self.booking_repo.get_queue_count(schedule.id,class_type,PassengerStatus.RAC)
         rac_capacity = await self.booking_repo.get_total_rac_capacity(request.train_id,class_type)
