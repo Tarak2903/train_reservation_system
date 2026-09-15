@@ -41,3 +41,9 @@ class CoachRepository:
         self.db.add(coach)
         await self.db.flush()
         return coach
+
+    async def find_coach_by_id(self, coach_id):
+        result = await self.db.execute(
+            select(Coach).where(Coach.id == coach_id)
+        )
+        return result.scalar_one_or_none()

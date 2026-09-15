@@ -57,15 +57,38 @@ class TrainService:
         return await self.coach_repo.get_coaches_by_train_id_and_class_type(train_id, class_type)
 
 
-    async def get_all_trains(self):
-        trains=await self.train_repo.get_all_trains()
-        if not trains:
-            raise TrainNotFoundException("No trains available")
-        return  trains
+    async def get_all_trains(self,journey_date):
+        if journey_date is None:
+            trains=await self.train_repo.get_all_trains()
+            if not trains:
+                raise TrainNotFoundException("No trains available")
+            return  trains
+        else:
+            trains=await self.train_repo.find_all_train_on_journey_date(journey_date)
+            if not trains:
+                raise TrainNotFoundException("No trains available")
+            return  trains
 
 
 
     async def find_train_by_number(self,train_number):
         trains=await self.train_repo.find_train_by_number(train_number)
         return trains
+
+
+    async def update_train(self, train_id, train_request):
+        train = await self.train_repo.find_train_by_id(train_id)
+
+        if not train:
+            raise ResourceNotFoundException("Train doesn't exist")
+
+        update_data = train_request.model_dump(exclude_unset=True)
+        print("Update_data",update_data)
+        for key, value in update_data.items():
+            setattr(train, key, value)
+
+        await self.train_repo.db.commit()
+        await self.train_repo.db.refresh(train)
+
+        return train
 

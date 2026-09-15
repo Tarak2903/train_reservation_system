@@ -98,12 +98,11 @@ async def get_booking_status(
     )
 
 
-@router.get("/availability", response_model=APIResponse[AvailabilityResponse], tags=["Booking"])
+@router.get("/train/{train_id}/availability", response_model=APIResponse[AvailabilityResponse], tags=["Booking"])
 async def get_availability(
-    train_id: int=Query(gt=0),
+    train_id: int=Path(gt=0),
     journey_date: date=Query(),
     class_type: CoachClass=Query(),
-    current_user: User = Depends(get_current_user),
     booking_service: BookingService = Depends(get_booking_service),
 ):
     result = await booking_service.get_availability(train_id, journey_date, class_type)
@@ -113,25 +112,3 @@ async def get_availability(
         message="Availability retrieved successfully",
         data=AvailabilityResponse(**result),
     )
-
-@router.get("/availability/{journey_date}",response_model=APIResponse[list[TrainResponse]],tags=['Booking'])
-async def get_all_trains_on_journey_date(journey_date:date=Path(),booking_service:BookingService=Depends(get_booking_service)):
-
-    trains=await booking_service.get_all_trains_on_journey_date(journey_date)
-
-    return APIResponse(
-        success=True,
-        message="Trains fetched successfully",
-        data= [
-            TrainResponse(
-                train_number=train.train.train_number,
-                train_name=train.train.train_name,
-                departure_time=train.train.departure_time,
-                arrival_time=train.train.arrival_time,
-                source=train.train.source,
-                destination=train.train.destination
-            )
-            for train in trains
-        ]
-    )
-

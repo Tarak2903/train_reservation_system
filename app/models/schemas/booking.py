@@ -19,7 +19,7 @@ class Booking(Base):
     train = relationship("Train", back_populates="bookings")
     schedule = relationship("TrainSchedule", back_populates="bookings")
     booker = relationship("User")
-    passengers = relationship("BookingPassenger", back_populates="booking", cascade="all, delete-orphan")
+    passengers = relationship("BookingPassenger", back_populates="booking")
 
 
 class BookingPassenger(Base):

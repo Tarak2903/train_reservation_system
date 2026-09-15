@@ -6,6 +6,9 @@ from app.dependency import get_train_service, get_coach_service
 from app.models.DTOs.APIResponse import APIResponse
 from app.models.DTOs.Coach.CoachCreationRequest import CoachCreationRequest
 from app.models.DTOs.Coach.CoachResponse import CoachResponse
+from app.models.DTOs.Coach.CoachUpdateRequest import CoachUpdateRequest
+from app.models.schemas.coach import Coach
+from app.models.schemas.user import User
 from app.services.CoachService import CoachService
 from app.services.TrainService import TrainService
 
@@ -51,4 +54,25 @@ async def add_train_coach(
             total_seat_capacity=created.total_seat_capacity,
             rac_capacity=created.rac_capacity,
         ),
+    )
+
+
+@router.patch("/{train_id}/coaches/{coach_id}",tags=['Admin'])
+async def update_coach(
+    train_id: int,
+    coach_id: int,
+    coach_request: CoachUpdateRequest,
+    coach_service: CoachService = Depends(get_coach_service),
+    user:User=Depends(get_current_admin)
+):
+    coach = await coach_service.update_coach(
+        train_id,
+        coach_id,
+        coach_request
+    )
+
+    return APIResponse(
+        success=True,
+        message="Coach updated successfully",
+        data=coach
     )

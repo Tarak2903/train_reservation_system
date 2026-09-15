@@ -71,3 +71,21 @@ class CoachService:
         if not coaches:
             raise ResourceNotFoundException("No coaches added in the train yet")
         return coaches.coaches
+
+    async def update_coach(self, train_id, coach_id, coach_request):
+        coach = await self.coach_repo.find_coach_by_id(coach_id)
+        if not coach:
+            raise ResourceNotFoundException("Coach doesn't exist")
+
+        if coach.train_id != train_id:
+            raise ResourceNotFoundException("Coach doesn't belong to this train")
+
+        update_data = coach_request.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
+            setattr(coach, key, value)
+
+        await self.coach_repo.db.commit()
+        await self.coach_repo.db.refresh(coach)
+
+        return coach
