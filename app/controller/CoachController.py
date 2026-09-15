@@ -35,8 +35,8 @@ async def get_coaches_by_train_number(train_number:int=Path(),coach_service:Coac
              response_model=APIResponse[CoachResponse],
              status_code=status.HTTP_201_CREATED ,tags=["Admin"])
 async def add_train_coach(
+    coach: CoachCreationRequest,
     train_id: int=Path(),
-    coach: CoachCreationRequest=Path(),
     admin=Depends(get_current_admin),
     coach_service: CoachService = Depends(get_coach_service),
 ):

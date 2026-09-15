@@ -124,12 +124,12 @@ async def get_all_trains_on_journey_date(journey_date:date=Path(),booking_servic
         message="Trains fetched successfully",
         data= [
             TrainResponse(
-                train_number=train.train_number,
-                train_name=train.train_name,
-                departure_time=train.departure_time,
-                arrival_time=train.arrival_time,
-                source=train.source,
-                destination=train.destination
+                train_number=train.train.train_number,
+                train_name=train.train.train_name,
+                departure_time=train.train.departure_time,
+                arrival_time=train.train.arrival_time,
+                source=train.train.source,
+                destination=train.train.destination
             )
             for train in trains
         ]
