@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String,Time
 from sqlalchemy.orm import relationship
 from app.helpers.database import Base
 
@@ -11,8 +11,8 @@ class Train(Base):
     train_name = Column(String, nullable=False)
     source = Column(String, nullable=False)
     destination = Column(String, nullable=False)
-    departure_time = Column(String, nullable=False)
-    arrival_time = Column(String, nullable=False)
+    departure_time = Column(Time, nullable=False)
+    arrival_time = Column(Time, nullable=False)
 
     schedules = relationship("TrainSchedule", back_populates="train")
     coaches = relationship("Coach", back_populates="train")

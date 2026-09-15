@@ -41,18 +41,6 @@ class TrainRepository:
         return result.scalar_one_or_none()
 
 
-    # async def get_coaches(self, train_id, class_type):
-    #     result = await self.db.execute(
-    #         select(Coach)
-    #         .options(selectinload(Coach.seats))
-    #         .where(
-    #             Coach.train_id == train_id,
-    #             Coach.class_type == class_type,
-    #         )
-    #         .order_by(Coach.id)
-    #     )
-    #     return result.scalars().all()
-
 
     async def find_all_train_on_journey_date(self,journey_date):
         result=await self.db.execute(

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 from starlette import status
 
 from app.auth import get_current_admin
@@ -11,8 +11,8 @@ from app.services.TrainService import TrainService
 
 router=APIRouter()
 
-@router.get('/trains/train_number',response_model=APIResponse[list[CoachResponse]],tags=['Booking'])
-async def get_coaches_by_train_number(train_number,coach_service:CoachService=Depends(get_coach_service)):
+@router.get('/trains/{train_number}/coaches',response_model=APIResponse[list[CoachResponse]],tags=['Booking'])
+async def get_coaches_by_train_number(train_number:int=Path(),coach_service:CoachService=Depends(get_coach_service)):
     coaches= await coach_service.get_coaches_by_train_number(train_number)
 
     return APIResponse(
@@ -35,8 +35,8 @@ async def get_coaches_by_train_number(train_number,coach_service:CoachService=De
              response_model=APIResponse[CoachResponse],
              status_code=status.HTTP_201_CREATED ,tags=["Admin"])
 async def add_train_coach(
-    train_id: int,
-    coach: CoachCreationRequest,
+    train_id: int=Path(),
+    coach: CoachCreationRequest=Path(),
     admin=Depends(get_current_admin),
     coach_service: CoachService = Depends(get_coach_service),
 ):

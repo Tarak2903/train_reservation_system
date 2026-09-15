@@ -3,9 +3,8 @@ uvicorn[standard]
 sqlalchemy
 asyncpg
 pydantic-settings
-pyjwt
+PyJWT
 pwdlib[argon2]
 python-multipart
 email-validator
-
 pytest

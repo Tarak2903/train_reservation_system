@@ -319,3 +319,8 @@ class BookingService:
             "rac": rac,
             "waitlist": waitlist,
         }
+    async def get_all_trains_on_journey_date(self,journey_date):
+        trains=await self.train_repo.find_all_train_on_journey_date(journey_date)
+        if len(trains) == 0:
+            raise ResourceNotFoundException("No trains exists on given journey date")
+        return trains

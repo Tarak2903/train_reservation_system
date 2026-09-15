@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path, Query
 from starlette import status
 
 from app.auth import get_current_admin, get_current_user
@@ -62,9 +62,9 @@ async def add_train(
 
 @router.get("/trains/{train_id}/layout", response_model=APIResponse[list], tags=["Booking"])
 async def get_seat_layout(
-    train_id: int,
-    journey_date: date,
-    class_type: CoachClass,
+    train_id: int=Path(),
+    journey_date: date=Query(),
+    class_type: CoachClass=Query(),
     current_user: User = Depends(get_current_user),
     train_service: TrainService = Depends(get_train_service),
 ):

@@ -1,18 +1,17 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path, Query
 
-from app.dependency import get_booking_service, get_train_service
-from app.models.enums import PassengerStatus, CoachClass
+from app.dependency import get_booking_service
+from app.models.DTOs.Train.TrainResponse import TrainResponse
+from app.models.enums import  CoachClass
 from app.auth import get_current_user
 from app.models.schemas.user import User
 from app.models.DTOs.APIResponse import APIResponse
 from app.models.DTOs.Booking.BookingRequest import BookingRequest
 from app.models.DTOs.Booking.BookingResponse import BookingResponse, PassengerResponse
 from app.models.DTOs.Booking.AvailabilityResponse import AvailabilityResponse
-from app.models.DTOs.Booking.QueueResponse import QueueResponse, QueuePassengerResponse
 from app.services.BookingService import BookingService
-from app.services.TrainService import TrainService
 
 router = APIRouter()
 
@@ -65,7 +64,7 @@ async def book_ticket(
 
 @router.delete("/bookings/{booking_id}", response_model=APIResponse[BookingResponse], tags=["Booking"])
 async def cancel_ticket(
-    booking_id: int,
+    booking_id: int=Path(gt=0),
     current_user: User = Depends(get_current_user),
     booking_service: BookingService = Depends(get_booking_service),
 ):
@@ -83,7 +82,7 @@ async def cancel_ticket(
 
 @router.get("/bookings/{booking_id}", response_model=APIResponse[BookingResponse], tags=["Booking"])
 async def get_booking_status(
-    booking_id: int,
+    booking_id: int=Path(gt=0),
     current_user: User = Depends(get_current_user),
     booking_service: BookingService = Depends(get_booking_service),
 ):
@@ -101,9 +100,9 @@ async def get_booking_status(
 
 @router.get("/availability", response_model=APIResponse[AvailabilityResponse], tags=["Booking"])
 async def get_availability(
-    train_id: int,
-    journey_date: date,
-    class_type: CoachClass,
+    train_id: int=Query(gt=0),
+    journey_date: date=Query(),
+    class_type: CoachClass=Query(),
     current_user: User = Depends(get_current_user),
     booking_service: BookingService = Depends(get_booking_service),
 ):
@@ -115,4 +114,24 @@ async def get_availability(
         data=AvailabilityResponse(**result),
     )
 
+@router.get("/availability/{journey_date}",response_model=APIResponse[list[TrainResponse]],tags=['Booking'])
+async def get_all_trains_on_journey_date(journey_date:date=Path(),booking_service:BookingService=Depends(get_booking_service)):
+
+    trains=await booking_service.get_all_trains_on_journey_date(journey_date)
+
+    return APIResponse(
+        success=True,
+        message="Trains fetched successfully",
+        data= [
+            TrainResponse(
+                train_number=train.train_number,
+                train_name=train.train_name,
+                departure_time=train.departure_time,
+                arrival_time=train.arrival_time,
+                source=train.source,
+                destination=train.destination
+            )
+            for train in trains
+        ]
+    )
 

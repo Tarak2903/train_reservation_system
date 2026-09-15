@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from app.exceptions.InvalidOperationException import InvalidOperationException
 from app.exceptions.ResourceNotFoundException import ResourceNotFoundException
@@ -13,8 +13,7 @@ from app.exceptions.handler import (
     unauthenticated_exception,
     forbidden_exception,
     invalid_operation_exception,
-    http_exception,
-    validation_exception,
+    validation_exception, invalid_time_exception,
 )
 from app.helpers.database import Base, engine
 
@@ -64,10 +63,12 @@ app.add_exception_handler(
     InvalidOperationException,
     invalid_operation_exception,
 )
-app.add_exception_handler(HTTPException, http_exception)
-app.add_exception_handler(RequestValidationError, validation_exception)
+app.add_exception_handler(
+    RequestValidationError,
+    validation_exception,
+)
+app.add_exception_handler(
+    ValueError,
+    invalid_time_exception
+)
 
-
-@app.get("/")
-async def root():
-    return {"message": "Train Reservation System"}
