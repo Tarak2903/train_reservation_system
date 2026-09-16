@@ -3,14 +3,14 @@ from starlette import status
 
 from app.auth import get_current_admin
 from app.dependency import get_train_service, get_coach_service
-from app.models.DTOs.APIResponse import APIResponse
-from app.models.DTOs.Coach.CoachCreationRequest import CoachCreationRequest
-from app.models.DTOs.Coach.CoachResponse import CoachResponse
-from app.models.DTOs.Coach.CoachUpdateRequest import CoachUpdateRequest
+from app.models.DTOs.api_response import APIResponse
+from app.models.DTOs.Coach.coach_creation_request import CoachCreationRequest
+from app.models.DTOs.Coach.coach_response import CoachResponse
+from app.models.DTOs.Coach.coach_update_request import CoachUpdateRequest
 from app.models.schemas.coach import Coach
 from app.models.schemas.user import User
-from app.services.CoachService import CoachService
-from app.services.TrainService import TrainService
+from app.services.coach_service import CoachService
+from app.services.train_service import TrainService
 
 router=APIRouter()
 

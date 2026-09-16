@@ -5,13 +5,13 @@ from starlette import status
 
 from app.auth import get_current_admin, get_current_user
 from app.dependency import get_train_service
-from app.models.DTOs.APIResponse import APIResponse
-from app.models.DTOs.Train.TrainCreationRequest import TrainCreationRequest
-from app.models.DTOs.Train.TrainResponse import TrainResponse
-from app.models.DTOs.Train.TrainUpdateRequest import TrainUpdateRequest
+from app.models.DTOs.api_response import APIResponse
+from app.models.DTOs.Train.train_creation_request import TrainCreationRequest
+from app.models.DTOs.Train.train_response import TrainResponse
+from app.models.DTOs.Train.train_update_request import TrainUpdateRequest
 from app.models.enums import CoachClass
 from app.models.schemas.user import User
-from app.services.TrainService import TrainService
+from app.services.train_service import TrainService
 
 router=APIRouter()
 

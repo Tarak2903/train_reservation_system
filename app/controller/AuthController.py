@@ -3,10 +3,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
 from app.dependency import get_auth_service
-from app.models.DTOs.APIResponse import APIResponse
-from app.models.DTOs.Auth.SignupRequest import SignupRequest
-from app.models.DTOs.Auth.Token import Token
-from app.services.AuthService import AuthService
+from app.models.DTOs.api_response import APIResponse
+from app.models.DTOs.Auth.signup_request import SignupRequest
+from app.models.DTOs.Auth.token import Token
+from app.services.auth_service import AuthService
 
 router = APIRouter(prefix="/auth")
 

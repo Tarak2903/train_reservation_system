@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends
 from starlette import status
 from app.auth import get_current_admin
 from app.dependency import get_train_service, get_journey_service
-from app.models.DTOs.APIResponse import APIResponse
-from app.models.DTOs.Train.JourneyCreationRequest import JourneyCreationRequest
-from app.models.DTOs.Train.JourneyResponse import JourneyResponse
-from app.services.JourneyService import JourneyService
+from app.models.DTOs.api_response import APIResponse
+from app.models.DTOs.Train.journey_creation_request import JourneyCreationRequest
+from app.models.DTOs.Train.journey_response import JourneyResponse
+from app.services.journey_service import JourneyService
 
 router=APIRouter()
 

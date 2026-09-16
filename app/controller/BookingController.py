@@ -3,15 +3,15 @@ from datetime import date
 from fastapi import APIRouter, Depends, Path, Query
 
 from app.dependency import get_booking_service
-from app.models.DTOs.Train.TrainResponse import TrainResponse
+from app.models.DTOs.Train.train_response import TrainResponse
 from app.models.enums import  CoachClass
 from app.auth import get_current_user
 from app.models.schemas.user import User
-from app.models.DTOs.APIResponse import APIResponse
-from app.models.DTOs.Booking.BookingRequest import BookingRequest
-from app.models.DTOs.Booking.BookingResponse import BookingResponse, PassengerResponse
-from app.models.DTOs.Booking.AvailabilityResponse import AvailabilityResponse
-from app.services.BookingService import BookingService
+from app.models.DTOs.api_response import APIResponse
+from app.models.DTOs.Booking.booking_request import BookingRequest
+from app.models.DTOs.Booking.booking_response import BookingResponse, PassengerResponse
+from app.models.DTOs.Booking.availability_response import AvailabilityResponse
+from app.services.booking_service import BookingService
 
 router = APIRouter()
 

@@ -2,17 +2,17 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.helpers.database import get_db
-from app.repositories.CoachRepository import CoachRepository
-from app.repositories.AuthRepository import AuthRepository
-from app.repositories.JourneyRepository import JourneyRepository
-from app.repositories.SeatRepository import SeatRepository
-from app.repositories.TrainRepository import TrainRepository
-from app.repositories.BookingRepository import BookingRepository
-from app.services.AuthService import AuthService
-from app.services.CoachService import CoachService
-from app.services.JourneyService import JourneyService
-from app.services.TrainService import TrainService
-from app.services.BookingService import BookingService
+from app.repositories.coach_repository import CoachRepository
+from app.repositories.auth_repository import AuthRepository
+from app.repositories.journey_repository import JourneyRepository
+from app.repositories.seat_repository import SeatRepository
+from app.repositories.train_repository import TrainRepository
+from app.repositories.booking_repository import BookingRepository
+from app.services.auth_service import AuthService
+from app.services.coach_service import CoachService
+from app.services.journey_service import JourneyService
+from app.services.train_service import TrainService
+from app.services.booking_service import BookingService
 
 def get_auth_repository(db:AsyncSession=Depends(get_db)):
     return AuthRepository(db)

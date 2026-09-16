@@ -8,7 +8,7 @@ from app.dependency import get_auth_repository
 from app.models.enums import Role
 from app.exceptions.UnauthenticatedException import UnauthenticatedException
 from app.exceptions.ForbiddenException import ForbiddenException
-from app.repositories.AuthRepository import AuthRepository
+from app.repositories.auth_repository import AuthRepository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 

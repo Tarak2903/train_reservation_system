@@ -10,7 +10,7 @@ from app.exceptions.ResrouceAlreadyExistsException import (
 )
 from app.exceptions.ForbiddenException import ForbiddenException
 
-from app.models.DTOs.APIResponse import APIResponse, ErrorDetail
+from app.models.DTOs.api_response import APIResponse, ErrorDetail
 
 
 def error_response(status_code: int, message: str):
