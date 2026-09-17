@@ -3,6 +3,18 @@ from unittest.mock import MagicMock,AsyncMock
 from app.exceptions.ResourceNotFoundException import ResourceNotFoundException
 from app.exceptions.ResrouceAlreadyExistsException import ResourceAlreadyExistsException
 from app.exceptions.train_exceptions import TrainNotFoundException
+from app.services.coach_service import CoachService
+
+
+@pytest.fixture
+def repos():
+    return AsyncMock(),AsyncMock(),AsyncMock()
+
+
+@pytest.fixture
+def service(repos):
+    coach_repo,train_repo,seat_repo=repos
+    return CoachService(coach_repo, train_repo, seat_repo)
 
 
 @pytest.mark.asyncio
