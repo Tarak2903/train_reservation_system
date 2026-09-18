@@ -5,7 +5,7 @@ from pwdlib import PasswordHash
 
 from app.helpers.config import settings
 from app.models.enums import Role
-from app.exceptions.UnauthenticatedException import UnauthenticatedException
+from app.exceptions.unauthenticated_exception import UnauthenticatedException
 from app.exceptions.user_exceptions import (
     ResourceAlreadyExistsException,
     ResourceNotFoundException

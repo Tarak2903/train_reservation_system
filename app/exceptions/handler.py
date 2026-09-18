@@ -2,13 +2,13 @@ from fastapi import Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.exceptions.InvalidOperationException import InvalidOperationException
-from app.exceptions.UnauthenticatedException import UnauthenticatedException
-from app.exceptions.ResourceNotFoundException import ResourceNotFoundException
-from app.exceptions.ResrouceAlreadyExistsException import (
+from app.exceptions.invalid_operation_exception import InvalidOperationException
+from app.exceptions.unauthenticated_exception import UnauthenticatedException
+from app.exceptions.resource_not_found_execption import ResourceNotFoundException
+from app.exceptions.resource_already_exists_exception import (
     ResourceAlreadyExistsException,
 )
-from app.exceptions.ForbiddenException import ForbiddenException
+from app.exceptions.forbidden_exception import ForbiddenException
 
 from app.models.DTOs.api_response import APIResponse, ErrorDetail
 
@@ -68,7 +68,7 @@ async def invalid_time_exception(
     request: Request,
     exc: ValueError,
 ):
-    return error_response(422, "Arrival time should be smaller than departure time")
+    return error_response(422, "Invalid time entered (format or past date or Arrival time>= Departure Time)")
 
 
 async def validation_exception(

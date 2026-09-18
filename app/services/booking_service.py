@@ -1,12 +1,13 @@
 import secrets
-from email import message
+from datetime import date
 
-from app.exceptions.ResrouceAlreadyExistsException import ResourceAlreadyExistsException
+from app.exceptions.forbidden_exception import ForbiddenException
+from app.exceptions.resource_already_exists_exception import ResourceAlreadyExistsException
 from app.models.enums import BookingStatus, PassengerStatus
 from app.exceptions.booking_exceptions import (
     BookingOperationException,
 )
-from app.exceptions.ResourceNotFoundException import ResourceNotFoundException
+from app.exceptions.resource_not_found_execption import ResourceNotFoundException
 from app.models.schemas.booking import Booking, BookingPassenger
 
 
@@ -77,16 +78,16 @@ class BookingService:
     async def validate_cancellation_request(self, booking_id, user_id):
         booking = await self.booking_repo.find_booking(booking_id)
 
+        if not booking:
+            raise ResourceNotFoundException("Booking Not found")
+
         if booking.status == BookingStatus.CANCELLED:
-            raise BookingOperationException(
+            raise ResourceNotFoundException(
                 "Booking already inactive"
             )
 
-        if not booking:
-            raise BookingOperationException("Booking Not found")
-
         if booking.user_id != user_id:
-            raise BookingOperationException(
+            raise  ForbiddenException(
                 "You can only cancel ur own ticket"
             )
         return booking
@@ -100,6 +101,8 @@ class BookingService:
 
 
     async def validate_journey(self,train_id,journey_date):
+        if journey_date<date.today():
+            raise ValueError
         journey=await self.journey_repo.find_schedule(train_id, journey_date)
         if not journey:
             raise BookingOperationException("Journey date is not available")
@@ -308,6 +311,8 @@ class BookingService:
         rac_capacity = await self.booking_repo.get_total_rac_capacity(train_id, class_type)
         rac = await self.booking_repo.get_queue_count(schedule.id,class_type,PassengerStatus.RAC,)
         waitlist = await self.booking_repo.get_queue_count(schedule.id,class_type,PassengerStatus.WL,)
+        if total ==0:
+            raise ResourceNotFoundException("Coach with this cls doesnt exist")
         return {
             "train_id": train_id,
             "journey_date": journey_date,

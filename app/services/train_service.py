@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from dns import update
 from sqlalchemy import select
 
-from app.exceptions.ResrouceAlreadyExistsException import ResourceAlreadyExistsException
+from app.exceptions.resource_already_exists_exception import ResourceAlreadyExistsException
 from app.exceptions.train_exceptions import (
     ResourceNotFoundException,
     TrainAlreadyExistsException,
@@ -46,15 +46,16 @@ class TrainService:
         return train
 
 
-    async def get_layout(self, train_id, journey_date, class_type):
+    async def get_layout(self, train_id, class_type):
         train = await self.train_repo.find_train_by_id(train_id)
         if not train:
             raise TrainNotFoundException("Train doesnt exists")
 
-        if not await self.journey_repo.find_schedule(train_id, journey_date):
-            raise TrainNotFoundException("Journey date is not available")
 
-        return await self.coach_repo.get_coaches_by_train_id_and_class_type(train_id, class_type)
+        result= await self.coach_repo.get_coaches_by_train_id_and_class_type(train_id, class_type)
+        if len(result)==0:
+            raise ResourceNotFoundException("Coach doesnt exist with this class type")
+        return result
 
 
     async def get_all_trains(self,journey_date):

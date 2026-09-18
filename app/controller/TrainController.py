@@ -81,12 +81,10 @@ async def add_train(
 @router.get("/trains/{train_id}/layout", response_model=APIResponse[list], tags=["Booking"])
 async def get_seat_layout(
     train_id: int=Path(),
-    journey_date: date=Query(),
     class_type: CoachClass=Query(),
-    current_user: User = Depends(get_current_user),
     train_service: TrainService = Depends(get_train_service),
 ):
-    coaches = await train_service.get_layout(train_id, journey_date, class_type)
+    coaches = await train_service.get_layout(train_id, class_type)
 
     data = [
         {

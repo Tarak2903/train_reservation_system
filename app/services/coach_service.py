@@ -1,5 +1,5 @@
-from app.exceptions.ResourceNotFoundException import ResourceNotFoundException
-from app.exceptions.ResrouceAlreadyExistsException import ResourceAlreadyExistsException
+from app.exceptions.resource_not_found_execption import ResourceNotFoundException
+from app.exceptions.resource_already_exists_exception import ResourceAlreadyExistsException
 from app.exceptions.train_exceptions import TrainNotFoundException
 from app.models.schemas.coach import Coach
 from app.models.schemas.seat import Seat

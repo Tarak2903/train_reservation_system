@@ -1,5 +1,5 @@
-from app.exceptions.ResourceNotFoundException import ResourceNotFoundException
-from app.exceptions.InvalidOperationException import InvalidOperationException
+from app.exceptions.resource_not_found_execption import ResourceNotFoundException
+from app.exceptions.invalid_operation_exception import InvalidOperationException
 
 
 class BookingNotFoundException(ResourceNotFoundException):

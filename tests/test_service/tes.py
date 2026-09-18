@@ -8,8 +8,8 @@ from app.models.schemas.user import User
 from app.services.booking_service import BookingService
 from app.models.enums import BookingStatus, PassengerStatus
 
-from app.exceptions.ResrouceAlreadyExistsException import ResourceAlreadyExistsException
-from app.exceptions.ResourceNotFoundException import ResourceNotFoundException
+from app.exceptions.resource_already_exists_exception import ResourceAlreadyExistsException
+from app.exceptions.resource_not_found_execption import ResourceNotFoundException
 from app.exceptions.booking_exceptions import BookingOperationException
 
 

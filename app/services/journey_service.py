@@ -1,7 +1,7 @@
-from app.exceptions.ResourceNotFoundException import ResourceNotFoundException
-from app.exceptions.ResrouceAlreadyExistsException import ResourceAlreadyExistsException
+from app.exceptions.resource_not_found_execption import ResourceNotFoundException
+from app.exceptions.resource_already_exists_exception import ResourceAlreadyExistsException
 from app.models.schemas.train_schedule import TrainSchedule
-
+from datetime import date
 
 class JourneyService:
     def __init__(self,journey_repo,train_repo):
@@ -14,8 +14,11 @@ class JourneyService:
 
 
     async def validate_journey_date(self,train_id,journey_request):
+        if journey_request.journey_date<date.today():
+            raise ValueError
         if await self.journey_repo.find_schedule(train_id,journey_request.journey_date,):
             raise ResourceAlreadyExistsException("Journey date already exists")
+
 
 
     async def add_journey(self, train_id, journey_request):

@@ -6,8 +6,8 @@ import jwt
 from app.helpers.config import settings
 from app.dependency import get_auth_repository
 from app.models.enums import Role
-from app.exceptions.UnauthenticatedException import UnauthenticatedException
-from app.exceptions.ForbiddenException import ForbiddenException
+from app.exceptions.unauthenticated_exception import UnauthenticatedException
+from app.exceptions.forbidden_exception import ForbiddenException
 from app.repositories.auth_repository import AuthRepository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
