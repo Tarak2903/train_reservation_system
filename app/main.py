@@ -14,11 +14,11 @@ from app.exceptions.handler import (
     invalid_operation_exception,
     validation_exception, invalid_time_exception,
 )
-from app.controller.AuthController import router as auth_router
-from app.controller.BookingController import router as booking_router
-from app.controller.TrainController import router as train_router
-from app.controller.CoachController import router as coach_router
-from app.controller.JourneyController import router as journey_router
+from app.controller.auth_controller import router as auth_router
+from app.controller.booking_controller import router as booking_router
+from app.controller.train_controller import router as train_router
+from app.controller.coach_controller import router as coach_router
+from app.controller.journey_controller import router as journey_router
 from app.helpers.database import Base, engine
 
 

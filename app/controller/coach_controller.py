@@ -57,7 +57,7 @@ async def add_train_coach(
     )
 
 
-@router.patch("/{train_id}/coaches/{coach_id}",tags=['Admin'])
+@router.patch("/trains/{train_id}/coaches/{coach_id}",tags=['Admin'])
 async def update_coach(
     train_id: int,
     coach_id: int,

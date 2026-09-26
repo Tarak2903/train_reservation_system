@@ -46,7 +46,7 @@ async def login_user(
     )
 
 
-@router.post("/token", response_model=Token, include_in_schema=False)
+@router.post("/token", response_model=Token)
 async def swagger_login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends(get_auth_service),

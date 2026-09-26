@@ -22,50 +22,20 @@ class BookingService:
     def generate_pnr():
         return str(secrets.randbelow(900000000) + 100000000)
 
-    async def _get_available_seats(
-            self,
-            train_id,
-            journey_date,
-            class_type,
-            group_size,
-    ):
-        occupied = await self.booking_repo.get_occupied_seat_ids(
-            train_id,
-            journey_date,
-            class_type,
-        )
-
-        seats = await self.booking_repo.get_seats(
-            train_id,
-            class_type,
-        )
-
+    async def _get_available_seats(self,train_id,journey_date,class_type,group_size,):
+        occupied = await self.booking_repo.get_occupied_seat_ids(train_id,journey_date,class_type,)
+        seats = await self.booking_repo.get_seats(train_id,class_type,)
         selected_seats = []
-
         for seat in seats:
-
             if seat.id in occupied:
                 continue
-
-            locked = await self.booking_repo.try_lock_seat(
-                journey_date,
-                seat.id,
-            )
-
+            locked = await self.booking_repo.try_lock_seat(journey_date,seat.id)
             if not locked:
                 continue
-
-            occupied_now = await self.booking_repo.get_occupied_seat_ids(
-                train_id,
-                journey_date,
-                class_type,
-            )
-
+            occupied_now = await self.booking_repo.get_occupied_seat_ids(train_id,journey_date,class_type)
             if seat.id in occupied_now:
                 continue
-
             selected_seats.append(seat)
-
             if len(selected_seats) == group_size:
                 break
 
@@ -82,14 +52,11 @@ class BookingService:
             raise ResourceNotFoundException("Booking Not found")
 
         if booking.status == BookingStatus.CANCELLED:
-            raise ResourceNotFoundException(
-                "Booking already inactive"
-            )
+            raise ResourceNotFoundException("Booking already inactive")
 
         if booking.user_id != user_id:
-            raise  ForbiddenException(
-                "You can only cancel ur own ticket"
-            )
+            raise  ForbiddenException("You can only cancel ur own ticket")
+
         return booking
 
 
@@ -116,18 +83,12 @@ class BookingService:
 
         for passenger_id in passenger_ids:
             if not await self.booking_repo.find_user(passenger_id):
-                raise ResourceNotFoundException(
-                    f"Passenger {passenger_id} doesnt exists"
-                )
+                raise ResourceNotFoundException(f"Passenger {passenger_id} doesnt exists")
 
-            if await self.booking_repo.find_active_passenger_on_journey(
-                passenger_id,
-                request.train_id,
-                request.journey_date,
-            ):
-                raise ResourceAlreadyExistsException(
-                    f"Passenger {passenger_id} already has an active booking"
-                )
+            if await self.booking_repo.find_active_passenger_on_journey(passenger_id,request.train_id,
+                request.journey_date):
+                raise ResourceAlreadyExistsException(f"Passenger {passenger_id} already has an active booking")
+
         return passenger_ids
 
     @staticmethod
@@ -183,48 +144,28 @@ class BookingService:
 
     async def book_confirm_ticket(self,booking,passenger_ids,available_seats):
         for passenger_id, seat in zip(passenger_ids, available_seats):
-            await self.booking_repo.add_passenger(
-                BookingPassenger(
-                    booking_id=booking.id,
-                    passenger_id=passenger_id,
-                    status=PassengerStatus.CNF,
-                    seat_id=seat.id,
-                )
-            )
+            await self.booking_repo.add_passenger(BookingPassenger(booking_id=booking.id,
+            passenger_id=passenger_id,status=PassengerStatus.CNF,seat_id=seat.id))
+
         return "Ticket booked successfully"
 
     async def book_waiting_ticket(self,booking,schedule,class_type,passenger_ids):
-        next_sequence = await self._next_sequence(
-            schedule.id,
-            class_type,
-            PassengerStatus.WL,
-        )
+
+        next_sequence = await self._next_sequence(schedule.id,class_type,PassengerStatus.WL)
         for passenger_id in passenger_ids:
             await self.booking_repo.add_passenger(
-                BookingPassenger(
-                    booking_id=booking.id,
-                    passenger_id=passenger_id,
-                    status=PassengerStatus.WL,
-                    queue_sequence=next_sequence,
-                )
+                BookingPassenger(booking_id=booking.id,passenger_id=passenger_id,
+                    status=PassengerStatus.WL,queue_sequence=next_sequence)
             )
             next_sequence += 1
         return "Ticket booked in waitlist"
 
     async def book_rac_ticket(self,booking,schedule,class_type,passenger_ids):
-        next_sequence = await self._next_sequence(
-            schedule.id,
-            class_type,
-            PassengerStatus.RAC,
-        )
+        next_sequence = await self._next_sequence(schedule.id,class_type,PassengerStatus.RAC)
         for passenger_id in passenger_ids:
             await self.booking_repo.add_passenger(
-                BookingPassenger(
-                    booking_id=booking.id,
-                    passenger_id=passenger_id,
-                    status=PassengerStatus.RAC,
-                    queue_sequence=next_sequence,
-                )
+                BookingPassenger(booking_id=booking.id,passenger_id=passenger_id,
+                    status=PassengerStatus.RAC,queue_sequence=next_sequence)
             )
             next_sequence += 1
         return "Ticket booked in RAC"
