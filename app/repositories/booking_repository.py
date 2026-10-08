@@ -1,4 +1,4 @@
-from sqlalchemy import func, select,text
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -15,22 +15,23 @@ class BookingRepository:
         self.db = db
 
     async def try_lock_seat(self, journey_date, seat_id):
-        result = await self.db.execute(
-            text(
-                """
-                SELECT pg_try_advisory_xact_lock(
-                    :journey_key,
-                    :seat_id
-                )
-                """
-            ),
-            {
-                "journey_key": journey_date.toordinal(),
-                "seat_id": seat_id,
-            },
-        )
-
-        return result.scalar()
+        # result = await self.db.execute(
+        #     text(
+        #         """
+        #         SELECT pg_try_advisory_xact_lock(
+        #             :journey_key,
+        #             :seat_id
+        #         )
+        #         """
+        #     ),
+        #     {
+        #         "journey_key": journey_date.toordinal(),
+        #         "seat_id": seat_id,
+        #     },
+        # )
+        #
+        # return result.scalar()
+        return True
     async def find_booking(self, booking_id):
         result = await self.db.execute(
             select(Booking)

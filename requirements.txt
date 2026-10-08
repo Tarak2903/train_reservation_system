@@ -1,10 +1,11 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-asyncpg
+aiosqlite
 pydantic-settings
 PyJWT
 pwdlib[argon2]
 email-validator
+python-multipart
 pytest
 pytest-asyncio
